@@ -32,21 +32,22 @@ jobs:
         with:
           node-version: '20'
           cache: 'npm'
-          # Correction du chemin en minuscules
-          cache-dependency-path: './file-upload-service/package-lock.json'
+          # CORRECTION : Le fichier est à la racine du dépôt
+          cache-dependency-path: 'package-lock.json'
 
       - name: Install dependencies
         run: |
-          cd file-upload-service
+          # CORRECTION : Plus besoin de faire 'cd', on est déjà au bon endroit
           npm ci
 
       - name: Run Tests
         env:
+          # Configuration pour la connexion locale dans GitHub Actions
           MINIO_ENDPOINT: localhost
           MINIO_PORT: 9000
           MINIO_ACCESS_KEY: minioadmin
           MINIO_SECRET_KEY: minioadmin
           NODE_ENV: test
         run: |
-          cd file-upload-service
+          # On lance les tests directement à la racine
           npm test
