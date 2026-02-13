@@ -18,15 +18,14 @@ jobs:
         env:
           MINIO_ROOT_USER: minioadmin
           MINIO_ROOT_PASSWORD: minioadmin
-        # Correction syntaxe : On utilise 'options' pour passer la commande de démarrage
-        # L'image minio/minio a besoin de l'argument 'server /data'
+        # On passe la commande 'server /data' via --entrypoint dans options
         options: >-
+          --entrypoint /usr/bin/docker-entrypoint.sh
           --health-cmd "curl -f http://localhost:9000/minio/health/live"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-        # Commande par défaut pour démarrer le serveur MinIO
-        entrypoint: /usr/bin/docker-entrypoint.sh
+        # Les arguments de l'image sont ajoutés à la fin de la commande générée par GitHub
         args: server /data
 
     steps:
@@ -38,7 +37,6 @@ jobs:
         with:
           node-version: '20'
           cache: 'npm'
-          # Assurez-vous que ce chemin pointe vers votre package-lock.json
           cache-dependency-path: './FILE-UPLOAD-SERVICE/package-lock.json'
 
       - name: Install dependencies
@@ -48,7 +46,6 @@ jobs:
 
       - name: Run Tests
         env:
-          # Configuration pour que le code Node.js puisse joindre MinIO
           MINIO_ENDPOINT: localhost
           MINIO_PORT: 9000
           MINIO_ACCESS_KEY: minioadmin
