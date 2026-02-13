@@ -10,28 +10,24 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
-    services:
-      minio:
-        # On utilise une image plus stable/légère
-        image: quay.io/minio/minio
-        ports:
-          - 9000:9000
-        env:
-          MINIO_ROOT_USER: minioadmin
-          MINIO_ROOT_PASSWORD: minioadmin
-        # On injecte la commande de démarrage via options pour éviter le rejet de 'args'
-        options: >-
-          --entrypoint /bin/sh
-          --health-cmd "curl -f http://localhost:9000/minio/health/live"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        # Commande passée via le shell de l'entrypoint
-        args: -c "minio server /data"
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      # Étape de remplacement pour le service MinIO
+      - name: Start MinIO Server
+        run: |
+          docker run -d --name minio \
+            -p 9000:9000 \
+            -e "MINIO_ROOT_USER=minioadmin" \
+            -e "MINIO_ROOT_PASSWORD=minioadmin" \
+            quay.io/minio/minio server /data
+          
+          # On attend que MinIO soit prêt
+          echo "Waiting for MinIO..."
+          until curl -f http://localhost:9000/minio/health/live; do
+            sleep 2
+          done
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
