@@ -36,7 +36,6 @@ jobs:
 
       - name: Install dependencies
         run: |
-          # CORRECTION : Plus besoin de faire 'cd', on est déjà au bon endroit
           npm ci
 
       - name: Run Tests
@@ -47,5 +46,4 @@ jobs:
           MINIO_SECRET_KEY: minioadmin
           NODE_ENV: test
         run: |
-          # On lance les tests directement à la racine
           npm test
