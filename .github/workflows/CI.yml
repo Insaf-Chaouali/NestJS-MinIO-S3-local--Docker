@@ -12,18 +12,22 @@ jobs:
 
     services:
       minio:
-        image: bitnami/minio:latest
+        # On utilise une image plus stable/légère
+        image: quay.io/minio/minio
         ports:
           - 9000:9000
         env:
           MINIO_ROOT_USER: minioadmin
           MINIO_ROOT_PASSWORD: minioadmin
-          MINIO_DEFAULT_BUCKETS: uploads  # Bonus: crée le bucket automatiquement
+        # On injecte la commande de démarrage via options pour éviter le rejet de 'args'
         options: >-
+          --entrypoint /bin/sh
           --health-cmd "curl -f http://localhost:9000/minio/health/live"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
+        # Commande passée via le shell de l'entrypoint
+        args: -c "minio server /data"
 
     steps:
       - name: Checkout code
