@@ -14,7 +14,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Étape de remplacement pour le service MinIO
       - name: Start MinIO Server
         run: |
           docker run -d --name minio \
@@ -23,9 +22,8 @@ jobs:
             -e "MINIO_ROOT_PASSWORD=minioadmin" \
             quay.io/minio/minio server /data
           
-          # On attend que MinIO soit prêt
           echo "Waiting for MinIO..."
-          until curl -f http://localhost:9000/minio/health/live; do
+          until curl -s -f http://localhost:9000/minio/health/live; do
             sleep 2
           done
 
@@ -34,11 +32,12 @@ jobs:
         with:
           node-version: '20'
           cache: 'npm'
+          # Correction du chemin en minuscules
           cache-dependency-path: './file-upload-service/package-lock.json'
 
       - name: Install dependencies
         run: |
-          cd FILE-UPLOAD-SERVICE
+          cd file-upload-service
           npm ci
 
       - name: Run Tests
