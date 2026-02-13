@@ -1,7 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { FilesService } from './files.service';
-import { MinioService } from '../storage/minio.service'; // Ajuste le chemin si besoin
-
+import { MinioService } from '../storage/minio.service'; 
 describe('FilesService', () => {
   let service: FilesService;
 
@@ -12,7 +11,6 @@ describe('FilesService', () => {
         {
           provide: MinioService,
           useValue: {
-            // Liste ici les méthodes que FilesService appelle, par exemple :
             upload: jest.fn(),
             delete: jest.fn(),
           },

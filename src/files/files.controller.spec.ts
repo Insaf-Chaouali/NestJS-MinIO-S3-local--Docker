@@ -12,7 +12,6 @@ describe('FilesController', () => {
         {
           provide: FilesService,
           useValue: {
-            // Mock des méthodes appelées par le controller
             saveFile: jest.fn(),
             getFile: jest.fn(),
           },

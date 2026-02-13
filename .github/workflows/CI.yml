@@ -32,7 +32,6 @@ jobs:
         with:
           node-version: '20'
           cache: 'npm'
-          # CORRECTION : Le fichier est à la racine du dépôt
           cache-dependency-path: 'package-lock.json'
 
       - name: Install dependencies
@@ -42,7 +41,6 @@ jobs:
 
       - name: Run Tests
         env:
-          # Configuration pour la connexion locale dans GitHub Actions
           MINIO_ENDPOINT: localhost
           MINIO_PORT: 9000
           MINIO_ACCESS_KEY: minioadmin
