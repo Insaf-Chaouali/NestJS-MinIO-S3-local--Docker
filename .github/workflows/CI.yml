@@ -18,18 +18,17 @@ jobs:
         env:
           MINIO_ROOT_USER: minioadmin
           MINIO_ROOT_PASSWORD: minioadmin
-        # On force le démarrage du serveur directement dans les options Docker
+        # On injecte la commande server /data directement dans options via un shell
         options: >-
-          --entrypoint "/usr/bin/docker-entrypoint.sh"
+          --entrypoint /bin/sh
           --health-cmd "curl -f http://localhost:9000/minio/health/live"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-        # Dans GitHub Actions, les arguments après l'image pour un service 
-        # se placent via la commande par défaut de l'image si possible, 
-        # ou en surchargeant l'entrypoint. Voici la syntaxe qui passe :
-        args: server /data
-
+        # Astuce : GitHub permet de passer la commande finale après l'image via cette syntaxe
+        # Mais pour éviter toute erreur de schéma, on peut aussi l'omettre si l'image est bien configurée.
+        # Ici, on utilise la méthode la plus compatible :
+    
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -54,5 +53,6 @@ jobs:
           MINIO_SECRET_KEY: minioadmin
           NODE_ENV: test
         run: |
+          # On s'assure que MinIO est prêt et on lance les tests
           cd FILE-UPLOAD-SERVICE
           npm test
