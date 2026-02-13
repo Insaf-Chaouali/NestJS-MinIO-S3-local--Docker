@@ -12,23 +12,19 @@ jobs:
 
     services:
       minio:
-        image: minio/minio
+        image: bitnami/minio:latest
         ports:
           - 9000:9000
         env:
           MINIO_ROOT_USER: minioadmin
           MINIO_ROOT_PASSWORD: minioadmin
-        # On injecte la commande server /data directement dans options via un shell
+          MINIO_DEFAULT_BUCKETS: uploads  # Bonus: crée le bucket automatiquement
         options: >-
-          --entrypoint /bin/sh
           --health-cmd "curl -f http://localhost:9000/minio/health/live"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-        # Astuce : GitHub permet de passer la commande finale après l'image via cette syntaxe
-        # Mais pour éviter toute erreur de schéma, on peut aussi l'omettre si l'image est bien configurée.
-        # Ici, on utilise la méthode la plus compatible :
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -53,6 +49,5 @@ jobs:
           MINIO_SECRET_KEY: minioadmin
           NODE_ENV: test
         run: |
-          # On s'assure que MinIO est prêt et on lance les tests
           cd FILE-UPLOAD-SERVICE
           npm test
