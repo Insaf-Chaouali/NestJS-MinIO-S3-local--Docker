@@ -34,7 +34,7 @@ jobs:
         with:
           node-version: '20'
           cache: 'npm'
-          cache-dependency-path: './FILE-UPLOAD-SERVICE/package-lock.json'
+          cache-dependency-path: './file-upload-service/package-lock.json'
 
       - name: Install dependencies
         run: |
@@ -49,5 +49,5 @@ jobs:
           MINIO_SECRET_KEY: minioadmin
           NODE_ENV: test
         run: |
-          cd FILE-UPLOAD-SERVICE
+          cd file-upload-service
           npm test
