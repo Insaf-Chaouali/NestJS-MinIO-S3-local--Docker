@@ -18,15 +18,13 @@ jobs:
         env:
           MINIO_ROOT_USER: minioadmin
           MINIO_ROOT_PASSWORD: minioadmin
-        # On passe la commande 'server /data' via --entrypoint dans options
+        # On passe la commande de démarrage via 'options' avec --entrypoint
+        # ou on laisse l'image faire son travail par défaut.
         options: >-
-          --entrypoint /usr/bin/docker-entrypoint.sh
           --health-cmd "curl -f http://localhost:9000/minio/health/live"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-        # Les arguments de l'image sont ajoutés à la fin de la commande générée par GitHub
-        args: server /data
 
     steps:
       - name: Checkout code
@@ -37,6 +35,7 @@ jobs:
         with:
           node-version: '20'
           cache: 'npm'
+          # Vérifiez bien que ce chemin est correct selon votre structure
           cache-dependency-path: './FILE-UPLOAD-SERVICE/package-lock.json'
 
       - name: Install dependencies
@@ -46,6 +45,7 @@ jobs:
 
       - name: Run Tests
         env:
+          # Rappel : dans GitHub Actions, on utilise localhost pour les services
           MINIO_ENDPOINT: localhost
           MINIO_PORT: 9000
           MINIO_ACCESS_KEY: minioadmin
